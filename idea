@@ -1,0 +1,20 @@
+- features to be implemented:
+raw data collection of temperature, humidity, luxometer, CO2 concentration via RTOS system
+some raw data to be collected via linux kernel on beaglbone
+go bot to obtain the data above
+
+- details:
+go server and database: AWS instance
+custom bootloader for Linux and Bare Metal Embedded
+ISC communication via USB: bare metal and linux embedded
+kernel driver for some type of sensor
+CI/CD
+conteinerization
+
+current status:
+- buying the necessary peripherals:
+https://arduino.ua/prod1222-datchik-vlajnosti-i-temperatyri
+https://arduino.ua/prod1116-datchik-osveshhennosti-cifrovoi-bh1750fvi
+https://arduino.ua/prod1758-barometr-datchik-atmosfernogo-davleniya-na-bmp280
+https://arduino.ua/prod1151-sensornii-datchik-knopka
+- learning RTOS
