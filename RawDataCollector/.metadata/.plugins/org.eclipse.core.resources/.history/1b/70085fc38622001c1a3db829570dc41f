@@ -1,0 +1,13 @@
+/*
+ * MPU6050.h
+ *
+ *  Created on: Oct 1, 2021
+ *      Author: otimofieiev
+ */
+
+#ifndef INC_HTU21_H_
+#define INC_HTU21_H_
+
+
+
+#endif /* INC_HTU21_H_ */

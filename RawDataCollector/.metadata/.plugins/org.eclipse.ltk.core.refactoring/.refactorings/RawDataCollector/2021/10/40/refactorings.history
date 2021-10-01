@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;RawDataCollector/Core/Inc/MPU6050.h&apos; to &apos;HTU21.h&apos;" description="Rename resource &apos;MPU6050.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Inc/MPU6050.h" name="HTU21.h" stamp="1633072238679" updateReferences="true"/>
+</session>

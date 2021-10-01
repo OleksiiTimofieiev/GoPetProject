@@ -13,8 +13,8 @@ conteinerization
 
 current status:
 - buying the necessary peripherals:
-https://arduino.ua/prod1222-datchik-vlajnosti-i-temperatyri
-https://arduino.ua/prod1116-datchik-osveshhennosti-cifrovoi-bh1750fvi
-https://arduino.ua/prod1758-barometr-datchik-atmosfernogo-davleniya-na-bmp280
-https://arduino.ua/prod1151-sensornii-datchik-knopka
++ https://arduino.ua/prod1222-datchik-vlajnosti-i-temperatyri == I2C bus
+- https://arduino.ua/prod1116-datchik-osveshhennosti-cifrovoi-bh1750fvi
+- https://arduino.ua/prod1758-barometr-datchik-atmosfernogo-davleniya-na-bmp280
++ https://arduino.ua/prod1151-sensornii-datchik-knopka == external interrupt on pin
 - learning RTOS

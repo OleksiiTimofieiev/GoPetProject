@@ -1,0 +1,20 @@
+/*
+ * HTU21.c
+ *
+ *  Created on: Oct 1, 2021
+ *      Author: otimofieiev
+ */
+
+
+#include "HTU21.h"
+
+void readTempAndHumidity(void) {
+	float HTU21D_Temperature;
+	float HTU21D_Humidity;
+
+	uint8_t HTU21D_RX_Data[2];
+
+	uint16_t HTU21D_ADC_Raw;
+
+
+}
