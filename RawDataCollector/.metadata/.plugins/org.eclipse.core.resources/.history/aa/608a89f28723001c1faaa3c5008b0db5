@@ -1,0 +1,17 @@
+/*
+ * data.h
+ *
+ *  Created on: Oct 2, 2021
+ *      Author: otimofieiev
+ */
+
+#ifndef INC_DATA_H_
+#define INC_DATA_H_
+
+typedef struct	AllData
+{
+	float HTU21D_Temperature;
+	float HTU21D_Humidity;
+}				AllData;
+
+#endif /* INC_DATA_H_ */

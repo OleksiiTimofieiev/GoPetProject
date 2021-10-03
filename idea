@@ -21,4 +21,34 @@ https://robocraft.ru/blog/arduino/518.html
 https://github.com/1ukast/BMP280_STM32/blob/master/BMP280_hardware.cpp
 
 + https://arduino.ua/prod1151-sensornii-datchik-knopka == external interrupt on pin
-- learning RTOS
+
+cd /opt/st/stm32cubeide_1.7.0 && ./stm32cubeide
+
+Data: 
+PB12 - 8
+PA11 - 7
+PA12 - 6
+PC5 - 3
+
+#define D4_PORT GPIOC
+#define D4_PIN GPIO_PIN_3
+#define D5_PORT GPIOA
+#define D5_PIN GPIO_PIN_6
+#define D6_PORT GPIOA
+#define D6_PIN GPIO_PIN_7
+#define D7_PORT GPIOB
+#define D7_PIN GPIO_PIN_8
+
+
+Chip managment:
+PB13 - RS - 5
+PC8 - RW - 1
+PC6 - EN - 2
+
+#define RS_PORT GPIOB
+#define RS_PIN GPIO_PIN_5
+#define RW_PORT GPIOC
+#define RW_PIN GPIO_PIN_1
+#define EN_PORT GPIOC
+#define EN_PIN GPIO_PIN_2
+

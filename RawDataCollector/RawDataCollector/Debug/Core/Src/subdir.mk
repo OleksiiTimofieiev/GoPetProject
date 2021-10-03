@@ -6,7 +6,9 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Core/Src/BH1750.c \
+../Core/Src/BMP280.c \
 ../Core/Src/HTU21.c \
+../Core/Src/LED.c \
 ../Core/Src/main.c \
 ../Core/Src/stm32f4xx_hal_msp.c \
 ../Core/Src/stm32f4xx_it.c \
@@ -16,7 +18,9 @@ C_SRCS += \
 
 OBJS += \
 ./Core/Src/BH1750.o \
+./Core/Src/BMP280.o \
 ./Core/Src/HTU21.o \
+./Core/Src/LED.o \
 ./Core/Src/main.o \
 ./Core/Src/stm32f4xx_hal_msp.o \
 ./Core/Src/stm32f4xx_it.o \
@@ -26,7 +30,9 @@ OBJS += \
 
 C_DEPS += \
 ./Core/Src/BH1750.d \
+./Core/Src/BMP280.d \
 ./Core/Src/HTU21.d \
+./Core/Src/LED.d \
 ./Core/Src/main.d \
 ./Core/Src/stm32f4xx_hal_msp.d \
 ./Core/Src/stm32f4xx_it.d \

@@ -63,9 +63,9 @@ HAL_StatusTypeDef BH1750_send_command(BH1750_device_t* dev, uint8_t cmd)
 	return HAL_OK;
 }
 
-void BH1750_poll_self(BH1750_device_t* self)
+void BH1750_poll_self(BH1750_device_t* self, DeviceData *deviceData)
 {
-	BH1750_get_lumen(self);
+	BH1750_get_lumen(self, deviceData);
 }
 
 BH1750_device_t* BH1750_init_dev_struct(I2C_HandleTypeDef* i2c_handle,
@@ -118,22 +118,18 @@ HAL_StatusTypeDef BH1750_read_dev(BH1750_device_t* dev)
 	return HAL_OK;
 }
 
-HAL_StatusTypeDef BH1750_convert(BH1750_device_t* dev)
+uint16_t BH1750_convert(BH1750_device_t* dev)
 {
 	dev->value = dev->buffer[0];
 	dev->value = (dev->value << 8) | dev->buffer[1];
 
-	//TODO check float stuff
-	dev->value/=1.2;
-
-
-
-	return HAL_OK;
+	return dev->value/=1.2;
 }
 
-HAL_StatusTypeDef BH1750_get_lumen(BH1750_device_t* dev)
+HAL_StatusTypeDef BH1750_get_lumen(BH1750_device_t* dev, DeviceData *deviceData)
 {
 	BH1750_read_dev(dev);
-	BH1750_convert(dev);
+
+	deviceData->BH1750_Lumens = BH1750_convert(dev);
 	return HAL_OK;
 }

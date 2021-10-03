@@ -24,6 +24,11 @@
 /* USER CODE BEGIN Includes */
 #include "HTU21.h"
 #include "BH1750.h"
+#include "BMP280.h"
+#include "LED.h"
+#include <stdio.h>
+#include <string.h>
+#include "stdlib.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,6 +47,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
+I2C_HandleTypeDef hi2c3;
 
 UART_HandleTypeDef huart2;
 
@@ -54,13 +60,14 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_I2C3_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+bool checkData(DeviceData *deviceData, DeviceData *deviceDataCached);
 /* USER CODE END 0 */
 
 /**
@@ -70,7 +77,14 @@ static void MX_I2C1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	BMP280_HandleTypedef bmp280;
 
+	uint16_t size;
+	uint8_t Data[256];
+	DeviceData deviceData;
+	DeviceData deviceDataCached;
+	memset(&deviceData, 0, sizeof (deviceData));
+	memset(&deviceDataCached, 0, sizeof (deviceDataCached));
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -93,22 +107,126 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
+  MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
 
+
+  HAL_Delay(100);
+
+  LCD_Init();
+
+//  LCD_Clear();
+//  lcd_init();
+// 		  lcd_clear();
+// 		 	  	  lcd_put_cur(0, 0);
+// 		 	  	  lcd_send_string("H");
+// 		 	  	  lcd_send_string("WORLD ");
+// //		 	  	  lcd_send_string("FROM");
+// 		 	  	  HAL_Delay(1000);
+//// 		 	  	  lcd_put_cur(1, 0);
+//// 		 	  	  lcd_send_string("CONTROLLERSTECH");
+//// 		 	  	  HAL_Delay(2000);
+//// 		 	  	  lcd_clear();
+
+
+//  TODO: log to usb
+	size = sprintf((char *)Data,"SystemStart\r\n");
+	HAL_UART_Transmit(&huart2, Data, size, 1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  BH1750_device_t* test_dev = BH1750_init_dev_struct(&hi2c1, "test device", true);
-  BH1750_init_dev(test_dev);
+  BH1750_device_t* lumen = BH1750_init_dev_struct(&hi2c1, "test device", true);
+  BH1750_init_dev(lumen);
+
+  bmp280_init_default_params(&bmp280.params);
+  bmp280.addr = BMP280_I2C_ADDRESS_0;
+  bmp280.i2c = &hi2c3;
+
+  while (!bmp280_init(&bmp280, &bmp280.params))
+  {
+  	size = sprintf((char *)Data, "BMP280 initialization failed\n");
+  	// TODO: logs over USB
+//  		HAL_UART_Transmit(&huart1, Data, size, 1000);
+	HAL_Delay(100);
+  }
 
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	test_dev->poll(test_dev);
-	readTempAndHumidity(&hi2c1);
+
+	if (measureData)
+	{
+//		  lcd_init();
+//		  lcd_clear();
+//		 	  	  lcd_put_cur(0, 0);
+//		 	  	  lcd_send_string("H");
+////		 	  	  lcd_send_string("WORLD ");
+////		 	  	  lcd_send_string("FROM");
+//		 	  	  HAL_Delay(1000);
+//		 	  	  lcd_put_cur(1, 0);
+//		 	  	  lcd_send_string("CONTROLLERSTECH");
+//		 	  	  HAL_Delay(2000);
+//		 	  	  lcd_clear();
+		lumen->poll(lumen, &deviceData);
+		HAL_Delay(100);
+
+		readTempAndHumidity(&hi2c1, &deviceData);
+		HAL_Delay(100);
+
+		bmp280_read_float(&bmp280, &deviceData);
+
+		// TODO: reset board from external source
+//		if ((int)deviceData.HTU21D_Temperature >=35)
+//		{
+//			size = sprintf((char *)Data,"Wrong temperature2\r\n");
+//			HAL_UART_Transmit(&huart2, Data, size, 1000);
+//
+//		}
+
+		if (checkData(&deviceData, &deviceDataCached))
+		{
+			size = sprintf((char *)Data,"Lumen: %d lm; Temperature: %.d C; Humidity: %d %%; Pressure: %.d hPA\r\n",
+					(int)deviceData.BH1750_Lumens,
+					(int)deviceData.HTU21D_Temperature,
+					(int)deviceData.HTU21D_Humidity,
+					(int)deviceData.BMP280_Pressure);
+			deviceDataCached.BH1750_Lumens = deviceData.BH1750_Lumens;
+			deviceDataCached.BMP280_Pressure = deviceData.BMP280_Pressure;
+			deviceDataCached.HTU21D_Humidity = deviceData.HTU21D_Humidity;
+			deviceDataCached.HTU21D_Temperature = deviceData.HTU21D_Temperature;
+
+			// L: lm
+			// T: C
+			// H: %
+			// P: hPa
+			char LCD_Data_Lumen[3] = "";
+			char LCD_Data_Lumen_2[8]="";
+
+			itoa(deviceData.BH1750_Lumens, LCD_Data_Lumen, 10);
+			sprintf(LCD_Data_Lumen_2, "L:%s", LCD_Data_Lumen);
+//			char LCD_Data_Temperature[8];
+//			sprintf(LCD_Data_Temperature, "T:%cC", itoa(deviceData.HTU21D_Temperature));
+//			uint8_t LCD_Data_Humidity[8];
+//			uint8_t LCD_Data_Pascal[8];
+			// TODO: logs via USB
+			HAL_UART_Transmit(&huart2, Data, size, 1000);
+			LCD_Set_Cursor(1,1);
+			LCD_Write_String(LCD_Data_Lumen_2);
+
+//			LCD_Set_Cursor(1,8);
+//			LCD_Write_String(LCD_Data_Temperature);
+
+			LCD_Set_Cursor(2,7);
+			LCD_Write_String("test");
+		}
+
+
+
+		HAL_Delay(500);
+	}
   }
   /* USER CODE END 3 */
 }
@@ -132,13 +250,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 16;
-  RCC_OscInitStruct.PLL.PLLN = 336;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
-  RCC_OscInitStruct.PLL.PLLQ = 2;
-  RCC_OscInitStruct.PLL.PLLR = 2;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -147,12 +259,12 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
   {
     Error_Handler();
   }
@@ -189,6 +301,40 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief I2C3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C3_Init(void)
+{
+
+  /* USER CODE BEGIN I2C3_Init 0 */
+
+  /* USER CODE END I2C3_Init 0 */
+
+  /* USER CODE BEGIN I2C3_Init 1 */
+
+  /* USER CODE END I2C3_Init 1 */
+  hi2c3.Instance = I2C3;
+  hi2c3.Init.ClockSpeed = 100000;
+  hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c3.Init.OwnAddress1 = 0;
+  hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c3.Init.OwnAddress2 = 0;
+  hi2c3.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c3.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C3_Init 2 */
+
+  /* USER CODE END I2C3_Init 2 */
 
 }
 
@@ -241,7 +387,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LD2_Pin|GPIO_PIN_11|GPIO_PIN_12, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_8, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12|GPIO_PIN_13, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -249,17 +401,53 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pins : LD2_Pin PA11 PA12 */
+  GPIO_InitStruct.Pin = LD2_Pin|GPIO_PIN_11|GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PC5 PC6 PC8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PB12 PB13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB14 */
+  GPIO_InitStruct.Pin = GPIO_PIN_14;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 
 /* USER CODE BEGIN 4 */
+bool checkData(DeviceData *deviceData, DeviceData *deviceDataCached)
+{
+	if (deviceData->BH1750_Lumens != deviceDataCached->BH1750_Lumens)
+		return true;
+	else if (deviceData->BMP280_Pressure != deviceDataCached->BMP280_Pressure)
+		return true;
+	else if (deviceData->HTU21D_Humidity != deviceDataCached->HTU21D_Humidity)
+		return true;
+	else if (deviceData->HTU21D_Temperature != deviceDataCached->HTU21D_Temperature)
+		return true;
 
+	return false;
+}
 /* USER CODE END 4 */
 
 /**
