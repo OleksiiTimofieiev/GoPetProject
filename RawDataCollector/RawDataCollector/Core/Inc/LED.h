@@ -9,6 +9,7 @@
 #define INC_LED_H_
 
 #include "stm32f4xx_hal.h"
+
 //Data:
 //PB12 - 8 - D7
 //PA11 - 7 up- D6
@@ -24,12 +25,10 @@
 #define D7_PORT GPIOB
 #define D7_PIN GPIO_PIN_12
 
-
 //Chip managment:
 //PC8 - RW - 1 up
 //PC6 - EN - 2 up
 //PB13 - RS - 5 down
-
 
 #define RS_PORT GPIOB
 #define RS_PIN GPIO_PIN_13
@@ -37,22 +36,6 @@
 #define RW_PIN GPIO_PIN_8
 #define EN_PORT GPIOC
 #define EN_PIN GPIO_PIN_6
-//void LCD_Init();
-//void LCD_Set_Cursor(unsigned char r, unsigned char c);
-//typedef struct
-//{
-//	GPIO_TypeDef * LCD_GPIO;
-//	uint16_t D4_PIN;
-//	uint16_t D5_PIN;
-//	uint16_t D6_PIN;
-//	uint16_t D7_PIN;
-//	uint16_t EN_PIN;
-//	uint16_t RS_PIN;
-//	uint16_t LCD_EN_Delay;
-//}LCD16x2_CfgType;
-
-
-//extern const LCD16x2_CfgType LCD16x2_CfgParam;
 
 //-----[ Prototypes For All Functions ]-----
 

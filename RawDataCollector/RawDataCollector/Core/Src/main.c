@@ -68,6 +68,7 @@ static void MX_I2C3_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 bool checkData(DeviceData *deviceData, DeviceData *deviceDataCached);
+void displayOnLCD(DeviceData *deviceData);
 /* USER CODE END 0 */
 
 /**
@@ -115,20 +116,6 @@ int main(void)
 
   LCD_Init();
 
-//  LCD_Clear();
-//  lcd_init();
-// 		  lcd_clear();
-// 		 	  	  lcd_put_cur(0, 0);
-// 		 	  	  lcd_send_string("H");
-// 		 	  	  lcd_send_string("WORLD ");
-// //		 	  	  lcd_send_string("FROM");
-// 		 	  	  HAL_Delay(1000);
-//// 		 	  	  lcd_put_cur(1, 0);
-//// 		 	  	  lcd_send_string("CONTROLLERSTECH");
-//// 		 	  	  HAL_Delay(2000);
-//// 		 	  	  lcd_clear();
-
-
 //  TODO: log to usb
 	size = sprintf((char *)Data,"SystemStart\r\n");
 	HAL_UART_Transmit(&huart2, Data, size, 1000);
@@ -159,17 +146,6 @@ int main(void)
 
 	if (measureData)
 	{
-//		  lcd_init();
-//		  lcd_clear();
-//		 	  	  lcd_put_cur(0, 0);
-//		 	  	  lcd_send_string("H");
-////		 	  	  lcd_send_string("WORLD ");
-////		 	  	  lcd_send_string("FROM");
-//		 	  	  HAL_Delay(1000);
-//		 	  	  lcd_put_cur(1, 0);
-//		 	  	  lcd_send_string("CONTROLLERSTECH");
-//		 	  	  HAL_Delay(2000);
-//		 	  	  lcd_clear();
 		lumen->poll(lumen, &deviceData);
 		HAL_Delay(100);
 
@@ -178,14 +154,6 @@ int main(void)
 
 		bmp280_read_float(&bmp280, &deviceData);
 
-		// TODO: reset board from external source
-//		if ((int)deviceData.HTU21D_Temperature >=35)
-//		{
-//			size = sprintf((char *)Data,"Wrong temperature2\r\n");
-//			HAL_UART_Transmit(&huart2, Data, size, 1000);
-//
-//		}
-
 		if (checkData(&deviceData, &deviceDataCached))
 		{
 			size = sprintf((char *)Data,"Lumen: %d lm; Temperature: %.d C; Humidity: %d %%; Pressure: %.d hPA\r\n",
@@ -193,40 +161,16 @@ int main(void)
 					(int)deviceData.HTU21D_Temperature,
 					(int)deviceData.HTU21D_Humidity,
 					(int)deviceData.BMP280_Pressure);
+
 			deviceDataCached.BH1750_Lumens = deviceData.BH1750_Lumens;
 			deviceDataCached.BMP280_Pressure = deviceData.BMP280_Pressure;
 			deviceDataCached.HTU21D_Humidity = deviceData.HTU21D_Humidity;
 			deviceDataCached.HTU21D_Temperature = deviceData.HTU21D_Temperature;
 
-			// L: lm
-			// T: C
-			// H: %
-			// P: hPa
-			char LCD_Data_Lumen[3] = "";
-			char LCD_Data_Lumen_2[8]="";
-
-			itoa(deviceData.BH1750_Lumens, LCD_Data_Lumen, 10);
-			sprintf(LCD_Data_Lumen_2, "L:%s", LCD_Data_Lumen);
-//			char LCD_Data_Temperature[8];
-//			sprintf(LCD_Data_Temperature, "T:%cC", itoa(deviceData.HTU21D_Temperature));
-//			uint8_t LCD_Data_Humidity[8];
-//			uint8_t LCD_Data_Pascal[8];
-			// TODO: logs via USB
-			HAL_UART_Transmit(&huart2, Data, size, 1000);
-			LCD_Set_Cursor(1,1);
-			LCD_Write_String(LCD_Data_Lumen_2);
-
-//			LCD_Set_Cursor(1,8);
-//			LCD_Write_String(LCD_Data_Temperature);
-
-			LCD_Set_Cursor(2,7);
-			LCD_Write_String("test");
+			displayOnLCD(&deviceData);
 		}
-
-
-
-		HAL_Delay(500);
 	}
+	HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -447,6 +391,51 @@ bool checkData(DeviceData *deviceData, DeviceData *deviceDataCached)
 		return true;
 
 	return false;
+}
+
+void displayOnLCD(DeviceData *deviceData)
+{
+	// L: lm
+	// T: C
+	// H: %
+	// P: hPa
+	char LCD_Data_Lumen[3] = "";
+	char LCD_Data_Lumen_2[8]="";
+
+	char LCD_Data_Temperature[2] = "";
+	char LCD_Data_Temperature_2[8]="";
+
+	char LCD_Data_Humidity[2] = "";
+	char LCD_Data_Humidity_2[8]="";
+
+	char LCD_Data_Pressure[5] = "";
+	char LCD_Data_Pressure_2[10]="";
+
+	itoa(deviceData->BH1750_Lumens, LCD_Data_Lumen, 10);
+	sprintf(LCD_Data_Lumen_2, "L:%s", LCD_Data_Lumen);
+
+	itoa((int)deviceData->HTU21D_Temperature,LCD_Data_Temperature, 10);
+	sprintf(LCD_Data_Temperature_2, "T:%sC", LCD_Data_Temperature);
+
+	itoa((int)deviceData->HTU21D_Humidity,LCD_Data_Humidity, 10);
+	sprintf(LCD_Data_Humidity_2, "H:%s%%", LCD_Data_Humidity);
+
+	itoa((int)deviceData->BMP280_Pressure,LCD_Data_Pressure, 10);
+	sprintf(LCD_Data_Pressure_2, "P:%shPa", LCD_Data_Pressure);
+
+	LCD_Clear();
+
+	LCD_Set_Cursor(1,1);
+	LCD_Write_String(LCD_Data_Lumen_2);
+
+	LCD_Set_Cursor(1,8);
+	LCD_Write_String(LCD_Data_Temperature_2);
+
+	LCD_Set_Cursor(2,1);
+	LCD_Write_String(LCD_Data_Humidity_2);
+
+	LCD_Set_Cursor(2,8);
+	LCD_Write_String(LCD_Data_Pressure_2);
 }
 /* USER CODE END 4 */
 
