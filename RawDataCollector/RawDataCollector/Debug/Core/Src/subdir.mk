@@ -7,6 +7,7 @@
 C_SRCS += \
 ../Core/Src/BH1750.c \
 ../Core/Src/BMP280.c \
+../Core/Src/EEPROM.c \
 ../Core/Src/HTU21.c \
 ../Core/Src/LED.c \
 ../Core/Src/main.c \
@@ -19,6 +20,7 @@ C_SRCS += \
 OBJS += \
 ./Core/Src/BH1750.o \
 ./Core/Src/BMP280.o \
+./Core/Src/EEPROM.o \
 ./Core/Src/HTU21.o \
 ./Core/Src/LED.o \
 ./Core/Src/main.o \
@@ -31,6 +33,7 @@ OBJS += \
 C_DEPS += \
 ./Core/Src/BH1750.d \
 ./Core/Src/BMP280.d \
+./Core/Src/EEPROM.d \
 ./Core/Src/HTU21.d \
 ./Core/Src/LED.d \
 ./Core/Src/main.d \

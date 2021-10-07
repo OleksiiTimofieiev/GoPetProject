@@ -1,20 +1,10 @@
-11:34:45 **** Incremental Build of configuration Debug for project RawDataCollector ****
+20:32:57 **** Incremental Build of configuration Debug for project RawDataCollector ****
 make -j8 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-arm-none-eabi-gcc -o "RawDataCollector.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/otimofieiev/Desktop/GoPetProject/RawDataCollector/RawDataCollector/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="RawDataCollector.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: RawDataCollector.elf
- 
 arm-none-eabi-size   RawDataCollector.elf 
-arm-none-eabi-objdump -h -S  RawDataCollector.elf  > "RawDataCollector.list"
    text	   data	    bss	    dec	    hex	filename
-  25856	    120	   1840	  27816	   6ca8	RawDataCollector.elf
-arm-none-eabi-objcopy  -O binary  RawDataCollector.elf  "RawDataCollector.bin"
+  24976	    120	   1776	  26872	   68f8	RawDataCollector.elf
 Finished building: default.size.stdout
  
-Finished building: RawDataCollector.bin
- 
-Finished building: RawDataCollector.list
- 
 
-11:34:45 Build Finished. 0 errors, 0 warnings. (took 779ms)
+20:32:57 Build Finished. 0 errors, 0 warnings. (took 475ms)
 
