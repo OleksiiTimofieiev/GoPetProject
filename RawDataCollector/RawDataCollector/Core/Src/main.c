@@ -147,7 +147,7 @@ float datar3;
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  BH1750_device_t* lumen = BH1750_init_dev_struct(&hi2c1, "test device", true);
+  BH1750_device_t* lumen = BH1750_init_dev_struct(&hi2c3, "test device", true);
   BH1750_init_dev(lumen);
 
   bmp280_init_default_params(&bmp280.params);
@@ -161,7 +161,7 @@ float datar3;
 //  		HAL_UART_Transmit(&huart1, Data, size, 1000);
 	HAL_Delay(100);
   }
-
+  HAL_Delay(100);
   while (1)
   {
     /* USER CODE END WHILE */
@@ -177,6 +177,7 @@ float datar3;
 
 		bmp280_read_float(&bmp280, &deviceData);
 
+		HAL_Delay(100);
 		if (measureData && deviceData.BH1750_Lumens != 0)
 		{
 			if (checkData(&deviceData, &deviceDataCached))
