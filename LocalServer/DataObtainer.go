@@ -20,6 +20,7 @@ type Data struct {
 
 // TODO: wait ten second if zero values received
 // TODO: makefile to run app in the Docker container
+// TODO: check errors
 
 func main() {
 	MakeRequest()
