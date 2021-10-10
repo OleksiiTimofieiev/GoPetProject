@@ -51,6 +51,8 @@
 I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c3;
 
+UART_HandleTypeDef huart3;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -60,6 +62,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C3_Init(void);
+static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -87,16 +90,16 @@ int main(void)
 	memset(&deviceDataCached, 0, sizeof (deviceDataCached));
 
 
-	////
+	//// EEPROM block
 
-#define DEV_ADDR 0xa0
-uint8_t dataw1[] = "hello world from EEPROM";
-uint8_t dataw2[] = "This is the second string from EEPROM";
-float dataw3 = 1234.5678;
-
-uint8_t datar1[100];
-uint8_t datar2[100];
-float datar3;
+//#define DEV_ADDR 0xa0
+//uint8_t dataw1[] = "hello world from EEPROM";
+//uint8_t dataw2[] = "This is the second string from EEPROM";
+//float dataw3 = 1234.5678;
+//
+//uint8_t datar1[100];
+//uint8_t datar2[100];
+//float datar3;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -119,6 +122,7 @@ float datar3;
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_I2C3_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
   HAL_Delay(100);
@@ -126,23 +130,20 @@ float datar3;
 //  {
 //	  EEPROM_PageErase(i);
 //  }
-  EEPROM_Write(3, 0, dataw1, strlen((char *)dataw1));
-
-  EEPROM_Write(5, 20, dataw2, strlen((char *)dataw2));
-
-  EEPROM_Write_NUM (6, 0, dataw3);
-
-  EEPROM_Read(3, 0, datar1, 50);
-
-  EEPROM_Read(5, 15, datar2, 50);
-
-  datar3 = EEPROM_Read_NUM (6, 0);
+//  EEPROM_Write(3, 0, dataw1, strlen((char *)dataw1));
+//
+//  EEPROM_Write(5, 20, dataw2, strlen((char *)dataw2));
+//
+//  EEPROM_Write_NUM (6, 0, dataw3);
+//
+//  EEPROM_Read(3, 0, datar1, 50);
+//
+//  EEPROM_Read(5, 15, datar2, 50);
+//
+//  datar3 = EEPROM_Read_NUM (6, 0);
 
   LCD_Init();
 
-//  TODO: log to usb
-  size = sprintf((char *)Data,"SystemStart\r\n");
-//  HAL_UART_Transmit(&huart2, Data, size, 1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -157,11 +158,10 @@ float datar3;
   while (!bmp280_init(&bmp280, &bmp280.params))
   {
   	size = sprintf((char *)Data, "BMP280 initialization failed\n");
-  	// TODO: logs over USB
-//  		HAL_UART_Transmit(&huart1, Data, size, 1000);
 	HAL_Delay(100);
   }
   HAL_Delay(100);
+//  HAL_UART_Receive_IT(&huart3, str, 1);
   while (1)
   {
     /* USER CODE END WHILE */
@@ -194,10 +194,12 @@ float datar3;
 				deviceDataCached.HTU21D_Temperature = deviceData.HTU21D_Temperature;
 
 				displayOnLCD(&deviceData);
+				HAL_UART_Transmit(&huart3, Data, size,1000);
 			}
 
 		}
-		HAL_Delay(1000);
+		memset(Data, 0, sizeof(Data));
+		HAL_Delay(10000);
   }
   /* USER CODE END 3 */
 }
@@ -306,6 +308,39 @@ static void MX_I2C3_Init(void)
   /* USER CODE BEGIN I2C3_Init 2 */
 
   /* USER CODE END I2C3_Init 2 */
+
+}
+
+/**
+  * @brief USART3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART3_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART3_Init 0 */
+
+  /* USER CODE END USART3_Init 0 */
+
+  /* USER CODE BEGIN USART3_Init 1 */
+
+  /* USER CODE END USART3_Init 1 */
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 115200;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART3_Init 2 */
+
+  /* USER CODE END USART3_Init 2 */
 
 }
 
