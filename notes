@@ -1,0 +1,58 @@
+- features to be implemented:
+raw data collection of temperature, humidity, luxometer, CO2 concentration via RTOS system
+go bot to obtain the data above
+go via AWS
+
+- details:
+go server and database: AWS instance
+containerization
+
+
+
+
+Hardware notes:
+
+current status:
++ buying the necessary peripherals:
++ https://arduino.ua/prod1222-datchik-vlajnosti-i-temperatyri == I2C bus
++ https://arduino.ua/prod1116-datchik-osveshhennosti-cifrovoi-bh1750fvi == I2C bus
++ https://arduino.ua/prod1758-barometr-datchik-atmosfernogo-davleniya-na-bmp280
+
+https://robocraft.ru/blog/arduino/518.html
+https://github.com/1ukast/BMP280_STM32/blob/master/BMP280_hardware.cpp
+
++ https://arduino.ua/prod1151-sensornii-datchik-knopka == external interrupt on pin
+
+cd /opt/st/stm32cubeide_1.7.0 && ./stm32cubeide
+
+
+LCD 16*2 details:
+
+Data: 
+PB12 - 8 -> 12
+PA11 - 7 -> 11
+PA12 - 6 -> 12
+PC5 - 3 -> 5
+
+#define D4_PORT GPIOC
+#define D4_PIN GPIO_PIN_3
+#define D5_PORT GPIOA
+#define D5_PIN GPIO_PIN_6
+#define D6_PORT GPIOA
+#define D6_PIN GPIO_PIN_7
+#define D7_PORT GPIOB
+#define D7_PIN GPIO_PIN_8
+
+
+Chip managment:
+PB13 - RS - 5  -> 13
+PC8 - RW - 1  -> 8
+PC6 - EN - 2  -> 6
+
+#define RS_PORT GPIOB
+#define RS_PIN GPIO_PIN_13
+#define RW_PORT GPIOC
+#define RW_PIN GPIO_PIN_1
+#define EN_PORT GPIOC
+#define EN_PIN GPIO_PIN_2
+

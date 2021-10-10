@@ -194,12 +194,17 @@ int main(void)
 				deviceDataCached.HTU21D_Temperature = deviceData.HTU21D_Temperature;
 
 				displayOnLCD(&deviceData);
-				HAL_UART_Transmit(&huart3, Data, size,1000);
+				size = sprintf((char *)Data,"%d;%d;%d;%d",
+										(int)deviceData.BH1750_Lumens,
+										(int)deviceData.HTU21D_Temperature,
+										(int)deviceData.HTU21D_Humidity,
+										(int)deviceData.BMP280_Pressure);
+				HAL_UART_Transmit(&huart3, Data, size, 5000);
 			}
 
 		}
 		memset(Data, 0, sizeof(Data));
-		HAL_Delay(10000);
+		HAL_Delay(5000);
   }
   /* USER CODE END 3 */
 }

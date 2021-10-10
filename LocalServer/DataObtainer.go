@@ -9,12 +9,17 @@ import (
 )
 
 type Data struct {
-	IP string
-	GW string
-	NM string
+	IP string `json:"IP"`
+	GW string `json:"GW"`
+	NM string `json:"NM"`
+	L  string `json:"L"`
+	T  string `json:"T"`
+	H  string `json:"H"`
+	P  string `json:"P"`
 }
 
 // TODO: wait ten second if zero values received
+// TODO: makefile to run app in the Docker container
 
 func main() {
 	MakeRequest()
@@ -33,5 +38,6 @@ func MakeRequest() {
 	var data Data
 
 	json.Unmarshal([]byte(body), &data)
-	fmt.Printf("IP: %s, GW: %s", data.IP, data.GW)
+	// fmt.Println(data)
+	fmt.Printf("IP: %s\nGW: %s\nNM: %s\nL: %s lMn\nT: %s C\nH: %s%%\nP: %shPa\n", data.IP, data.GW, data.NM, data.L, data.T, data.H, data.P)
 }
