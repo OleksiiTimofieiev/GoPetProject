@@ -21,13 +21,18 @@ type Data struct {
 // TODO: wait ten second if zero values received
 // TODO: makefile to run app in the Docker container
 // TODO: check errors
+// TODO: https://ieftimov.com/post/four-steps-daemonize-your-golang-programs/
 
 func main() {
 	MakeRequest()
+	// for {
+
+	// }
 }
 
+// TODO: find ESP32
 func MakeRequest() {
-	resp, err := http.Get("http://192.168.8.103/data")
+	resp, err := http.Get("http://192.168.8.108/data")
 	if err != nil {
 		log.Fatalln(err)
 	}

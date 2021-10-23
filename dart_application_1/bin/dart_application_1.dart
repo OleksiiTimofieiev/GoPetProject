@@ -43,7 +43,31 @@ void main(List<String> arguments) {
   // for (classic)
   // for (x in collection)
   // nums2.forEach((element) { })
+  var bob = User('Bob', 40, true, ['huh', 'huh']);
+  // ..name = 'Bob'
+  // ..age = 40;
+  bob.info();
 }
 
 int sum(a, b) => a + b;
 dynamic summ(a, b) => a + b;
+
+class User {
+  String Name = "";
+  int Age = 0;
+  bool isHappy = false;
+  List<String> Hobbies = [""];
+
+  User(name, [age, isHappy, hobbies]) {
+    this.Name = name;
+    this.Age = age;
+    this.isHappy = isHappy;
+    this.Hobbies = hobbies;
+  }
+
+  void info() {
+    for (var el in Hobbies) {
+      print(el);
+    }
+  }
+}
