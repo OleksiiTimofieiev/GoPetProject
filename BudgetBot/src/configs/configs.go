@@ -15,7 +15,11 @@ func ReadConfigs() (*Configs, error) {
 	jsonConfigsFile, err := os.Open("./src/configs/configs.json")
 	if err != nil {
 		// TODO: to log file
-		fmt.Println(err)
+		jsonConfigsFile, err = os.Open("configs.json")
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
 	}
 
 	defer jsonConfigsFile.Close()

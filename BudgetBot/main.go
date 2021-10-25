@@ -35,10 +35,13 @@ func main() {
 		for _, update := range updates {
 			// TODO: add routing
 			// TODO: if db processed -> return succesful response
+			fmt.Printf("%q", update.Message.Text)
+			if update.Message.Text == "питание" {
+				fmt.Println("Food")
+			}
 			err = respond(botURL, update)
 			offset = update.UpdateId + 1
 		}
-		fmt.Println(updates)
 	}
 }
 
