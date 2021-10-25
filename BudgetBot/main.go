@@ -18,6 +18,7 @@ func main() {
 		fmt.Println("Configs not parsed")
 	}
 	botAPI := "https://api.telegram.org/bot"
+	fmt.Println(configs.BotToken)
 	botURL := botAPI + configs.BotToken
 	offset := 0
 	// TODO: to log file
